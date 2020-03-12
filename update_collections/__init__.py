@@ -10,6 +10,7 @@ REGIONAL_DATA_URL = os.environ["REGIONAL_DATA_URL"]
 PROVINCIAL_DATA_URL = os.environ["PROVINCIAL_DATA_URL"]
 DB_NAME = os.environ["DB_NAME"]
 PCM_PROVINCE_KEY = os.environ["PCM_PROVINCE_KEY"]
+PCM_REGION_KEY = os.environ["PCM_REGION_KEY"]
 PCM_DATE_KEY = os.environ["PCM_DATE_KEY"]
 try:
     PCM_DATE_FMT = os.environ["PCM_DATE_FMT"]
@@ -46,7 +47,7 @@ def main(mytimer: func.TimerRequest) -> None:
         date_dt = dt.datetime.strptime(d[PCM_DATE_KEY], PCM_DATE_FMT)
         d[PCM_DATE_KEY] = date_dt        
         regional_collection.update_one(
-            {PCM_DATE_KEY: d[PCM_DATE_KEY]},
+            {PCM_DATE_KEY: d[PCM_DATE_KEY], PCM_REGION_KEY: d[PCM_REGION_KEY]},
             {"$set": d},
             upsert=True
         )
