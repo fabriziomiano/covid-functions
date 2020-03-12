@@ -9,6 +9,7 @@ from ..shared import client, JSONEncoder, validate_request, validate_dates
 
 DATE_KEY = os.environ["DATE_KEY"]
 PROVINCE_KEY = os.environ["PROVINCE_KEY"]
+DB_NAME = os.environ["DB_NAME"]
 try:
     DATE_FMT = os.environ["DATE_FMT"]
 except KeyError:
@@ -39,7 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             PROVINCE_KEY: re.compile(province, re.IGNORECASE),
             DATE_KEY: {"$gte": date_from_dt, "$lte": date_to_dt}
         }
-    provincial_collection = client.coviddb_id.provincial
+    provincial_collection = client[DB_NAME].provincial
     provincial_results = list(provincial_collection.find(query_province))
     response = JSONEncoder().encode({
         "status": "OK",

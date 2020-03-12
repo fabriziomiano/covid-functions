@@ -7,6 +7,7 @@ import azure.functions as func
 from ..shared import client, JSONEncoder, validate_request, validate_dates
 
 DATE_KEY = os.environ["DATE_KEY"]
+DB_NAME = os.environ["DB_NAME"]
 try:
     DATE_FMT = os.environ["DATE_FMT"]
 except KeyError:
@@ -27,7 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     date_from_dt = dt.datetime.strptime(date_from, DATE_FMT)
     date_to_dt = dt.datetime.strptime(date_to, DATE_FMT)
     query_timewindow = {DATE_KEY: {"$gte": date_from_dt, "$lte": date_to_dt}}
-    national_collection = client.coviddb_id.national
+    national_collection = client[DB_NAME].national
     national_results = list(national_collection.find(query_timewindow))
     response = JSONEncoder().encode({
         "status": "OK",

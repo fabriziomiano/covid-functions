@@ -4,9 +4,12 @@ import logging
 import requests
 import azure.functions as func
 from ..shared import client
+
 NATIONAL_DATA_URL = os.environ["NATIONAL_DATA_URL"]
 REGIONAL_DATA_URL = os.environ["REGIONAL_DATA_URL"]
 PROVINCIAL_DATA_URL = os.environ["PROVINCIAL_DATA_URL"]
+DB_NAME = os.environ["DB_NAME"]
+
 national_data = requests.get(NATIONAL_DATA_URL).json()
 regional_data = requests.get(REGIONAL_DATA_URL).json()
 provincial_data = requests.get(PROVINCIAL_DATA_URL).json()
@@ -19,10 +22,10 @@ def main(mytimer: func.TimerRequest) -> None:
     if mytimer.past_due:
         logging.info('The timer is past due!')
 
-    logging.info('Running collections update timer trigger function at {}'.format(utc_timestamp))
-    national_collection = client.db.national
-    regional_collection = client.db.regional
-    provincial_collection = client.db.provincial
+    logging.info('Running collections update timer-trigger function at {}'.format(utc_timestamp))
+    national_collection = client[DB_NAME].national
+    regional_collection = client[DB_NAME].regional
+    provincial_collection = client[DB_NAME].provincial
     logging.info("Updating national collection")
     for d in national_data:
         national_collection.update_one(
