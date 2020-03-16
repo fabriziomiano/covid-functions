@@ -10,7 +10,6 @@ from ..shared import client, JSONEncoder, validate_request, validate_dates
 DATE_KEY = os.environ["DATE_KEY"]
 REGION_KEY = os.environ["REGION_KEY"]
 DB_NAME = os.environ["DB_NAME"]
-PCM_DATE_KEY = os.environ["PCM_DATE_KEY"]
 try:
     DATE_FMT = os.environ["DATE_FMT"]
 except KeyError:
@@ -39,13 +38,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     else:
         query_region = {
             REGION_KEY: re.compile(region, re.IGNORECASE),
-            PCM_DATE_KEY: {"$gte": date_from_dt, "$lte": date_to_dt}
+            DATE_KEY: {"$gte": date_from_dt, "$lte": date_to_dt}
         }
     regional_collection = client[DB_NAME].regional
     regional_results = list(regional_collection.find(query_region))
     response = JSONEncoder().encode({
         "status": "OK",
-        PCM_DATE_KEY: regional_results
+        "data": regional_results
     })
     return func.HttpResponse(
         response, mimetype="application/json", status_code=200)
