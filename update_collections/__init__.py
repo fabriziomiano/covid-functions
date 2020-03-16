@@ -34,33 +34,51 @@ def main(mytimer: func.TimerRequest) -> None:
     national_collection = client[DB_NAME].national
     regional_collection = client[DB_NAME].regional
     provincial_collection = client[DB_NAME].provincial
-    logging.info("Updating national collection")
+    # TODO: the following loops should obviously put into a function
+    logging.info("Updating national collection...")
     for d in national_data:
-        date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-        d[DATE_KEY] = date_dt
-        national_collection.update_one(
-            {DATE_KEY: d[DATE_KEY]},
-            {"$set": d},
-            upsert=True
-        )
-    logging.info("Updating regional collection")
+        try:
+            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
+            d[DATE_KEY] = date_dt
+            national_collection.update_one(
+                {DATE_KEY: d[DATE_KEY]},
+                {"$set": d},
+                upsert=True
+            )
+        except Exception as e:
+            logging.error(
+                "Exception raised while processing {}: {}".format(d[DATE_KEY], e))
+    logging.info("Done with national data")
+    logging.info("Updating regional collection...")
     for d in regional_data:
-        date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-        d[DATE_KEY] = date_dt        
-        regional_collection.update_one(
-            {DATE_KEY: d[DATE_KEY], PCM_REGION_KEY: d[PCM_REGION_KEY]},
-            {"$set": d},
-            upsert=True
-        )
-    logging.info("Updating provincial collection")
+        try:
+            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
+            d[DATE_KEY] = date_dt        
+            regional_collection.update_one(
+                {DATE_KEY: d[DATE_KEY], PCM_REGION_KEY: d[PCM_REGION_KEY]},
+                {"$set": d},
+                upsert=True
+            )
+        except Exception as e:
+            logging.error(
+                "Exception raised while processing {} {}: {}".format(
+                    d[DATE_KEY], d[PCM_REGION_KEY], e))
+    logging.info("Done with regional data")
+    logging.info("Updating provincial collection...")
     for d in provincial_data:
-        date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-        d[DATE_KEY] = date_dt        
-        provincial_collection.update_one(
-            {DATE_KEY: d[DATE_KEY], PCM_PROVINCE_KEY: d[PCM_PROVINCE_KEY]},
-            {"$set": d},
-            upsert=True
-        )
+        try:
+            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
+            d[DATE_KEY] = date_dt        
+            provincial_collection.update_one(
+                {DATE_KEY: d[DATE_KEY], PCM_PROVINCE_KEY: d[PCM_PROVINCE_KEY]},
+                {"$set": d},
+                upsert=True
+            )
+        except Exception as e:
+            logging.error(
+                "Exception raised while processing {} {}: {}".format(
+                    d[DATE_KEY], d[PCM_PROVINCE_KEY], e))
+    logging.info("Done with provincial data")
     logging.info(
         'Collections update finished at {}'.format(
             dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc).isoformat()
