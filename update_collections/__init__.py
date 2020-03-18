@@ -48,6 +48,7 @@ def main(mytimer: func.TimerRequest) -> None:
         except Exception as e:
             logging.error(
                 "Exception raised while processing {}: {}".format(d[DATE_KEY], e))
+            logging.error("Type of parsed data: {}".format(type(d[DATE_KEY])))
     logging.info("Done with national data")
     logging.info("Updating regional collection...")
     for d in regional_data:
@@ -63,6 +64,8 @@ def main(mytimer: func.TimerRequest) -> None:
             logging.error(
                 "Exception raised while processing {} {}: {}".format(
                     d[DATE_KEY], d[PCM_REGION_KEY], e))
+            logging.error(
+                "Type of parsed data: {} {}".format(type(d[DATE_KEY], type(d[PCM_REGION_KEY]))))
     logging.info("Done with regional data")
     logging.info("Updating provincial collection...")
     for d in provincial_data:
@@ -78,6 +81,8 @@ def main(mytimer: func.TimerRequest) -> None:
             logging.error(
                 "Exception raised while processing {} {}: {}".format(
                     d[DATE_KEY], d[PCM_PROVINCE_KEY], e))
+            logging.error(
+                "Type of parsed data: {} {}".format(type(d[DATE_KEY], type(d[PCM_PROVINCE_KEY]))))
     logging.info("Done with provincial data")
     logging.info(
         'Collections update finished at {}'.format(
