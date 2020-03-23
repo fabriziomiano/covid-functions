@@ -38,8 +38,6 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info("Updating national collection...")
     for d in national_data:
         try:
-            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-            d[DATE_KEY] = date_dt
             national_collection.update_one(
                 {DATE_KEY: d[DATE_KEY]},
                 {"$set": d},
@@ -53,8 +51,6 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info("Updating regional collection...")
     for d in regional_data:
         try:
-            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-            d[DATE_KEY] = date_dt        
             regional_collection.update_one(
                 {DATE_KEY: d[DATE_KEY], PCM_REGION_KEY: d[PCM_REGION_KEY]},
                 {"$set": d},
@@ -70,8 +66,6 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info("Updating provincial collection...")
     for d in provincial_data:
         try:
-            date_dt = dt.datetime.strptime(d[DATE_KEY], PCM_DATE_FMT)
-            d[DATE_KEY] = date_dt        
             provincial_collection.update_one(
                 {DATE_KEY: d[DATE_KEY], PCM_PROVINCE_KEY: d[PCM_PROVINCE_KEY]},
                 {"$set": d},
